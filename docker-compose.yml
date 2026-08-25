@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  quantum-compiler-pulse-level:
+    build: .
+    container_name: quantum-compiler-pulse-level
+    ports:
+      - "8000:8000"
+    environment:
+      - AUDIT_SECRET_KEY=quantum-compiler-pulse-level-prod-audit-key-2026
+      - MODEL_PROVIDER=mock
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
