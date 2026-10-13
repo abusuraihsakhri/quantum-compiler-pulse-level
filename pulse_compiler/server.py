@@ -15,7 +15,7 @@ def create_app():
 
         app = FastAPI(
             title="Pulse-Level Microwave Control & Qiskit Pulse Calibration Agent",
-            description="Calibrates DRAG (Derivative Removal by Adiabatic Gate) Gaussian pulses to eliminate leakage into higher non-computational states.",
+            description="Deterministic numeric threshold demonstration; does not synthesize DRAG pulses or perform hardware calibration.",
             version="2.0.0-FRONTIER",
         )
 
