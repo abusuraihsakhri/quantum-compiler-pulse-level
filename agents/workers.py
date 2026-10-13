@@ -20,7 +20,7 @@ class InvariantQCWorker:
                 origin_worker="InvariantQCWorker",
                 urgency=UrgencyLevel.ELEVATED,
                 summary="Primary Metric Threshold Exceeded",
-                technical_details=f"Primary measurement ({payload.primary_metric:.2f}) exceeds upper reference limit (25.00) under NIST FIPS 203/204/205 / ISO/IEC 17825 Standards.",
+                technical_details=f"Primary measurement ({payload.primary_metric:.2f}) exceeds upper reference limit (25.00) in the demonstration rule set.",
                 actionable_remediation="Initiate recalibration workflow and review secondary parameters.",
             ))
         return alerts
@@ -37,9 +37,9 @@ class SafetyEscalationWorker:
                 alert_id=f"SAFE-{uuid.uuid4().hex[:6]}",
                 origin_worker="SafetyEscalationWorker",
                 urgency=UrgencyLevel.CRITICAL_STAT if payload.is_critical_flag else UrgencyLevel.ELEVATED,
-                summary="Critical Safety Interlock Triggered",
+                summary="Secondary Threshold or Critical Flag Triggered",
                 technical_details=f"CriticalFlag={payload.is_critical_flag} with secondary index {payload.secondary_metric:.2f}.",
-                actionable_remediation="Execute immediate closed-loop escalation and notify attending supervisor.",
+                actionable_remediation="Review flagged inputs and follow applicable operating procedures.",
             ))
         return alerts
 
@@ -57,7 +57,7 @@ class ProtocolConformanceWorker:
                 origin_worker="ProtocolConformanceWorker",
                 urgency=UrgencyLevel.ELEVATED,
                 summary="Protocol Conformance Discordance Detected",
-                technical_details=f"Descriptor '{payload.status_descriptor}' indicates discordance with NIST FIPS 203/204/205 / ISO/IEC 17825 Standards standards.",
-                actionable_remediation="Re-evaluate input specimen or rerun secondary confirmation assay.",
+                technical_details=f"Descriptor '{payload.status_descriptor}' matches an example flagged term; no standards conformance assessment was performed.",
+                actionable_remediation="Review input data and descriptor classification.",
             ))
         return alerts
