@@ -46,7 +46,7 @@ class AgentTelemetryAlert:
     summary: str
     technical_details: str
     actionable_remediation: str
-    standard_reference: str = "Qiskit Pulse / OpenPulse Standard"
+    standard_reference: str = "Example threshold rules; no standards conformance assessment"
     timestamp: str = field(default_factory=lambda: datetime.datetime.now(datetime.timezone.utc).isoformat())
 
     def to_dict(self) -> Dict[str, Any]:
