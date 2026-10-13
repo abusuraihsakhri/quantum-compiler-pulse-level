@@ -93,7 +93,7 @@ class PulseControlCoordinator:
             "critical_count": crit_count,
             "warning_count": warn_count,
             "alerts": [a.to_dict() for a in all_alerts],
-            "standard_specification": "Qiskit Pulse / OpenPulse Standard",
+            "standard_specification": "Example threshold rules, not OpenPulse conformance",
             "consensus_summary": f"Consensus evaluation completed across 3 sub-agents with status [{status.value}].",
         }
 
@@ -105,6 +105,6 @@ class PulseControlCoordinator:
         if "status" in q or "ledger" in q:
             return f"Pulse-Level Microwave Control & Qiskit Pulse Calibration Agent currently managing {len(self.execution_ledger)} execution tasks in air-gapped memory."
         elif "standard" in q or "spec" in q:
-            return "Active runtime operating strictly according to Qiskit Pulse / OpenPulse Standard specifications."
+            return "Example numeric evaluation only; no Qiskit Pulse hardware execution or OpenPulse conformance certification."
         else:
             return f"Pulse-Level Microwave Control & Qiskit Pulse Calibration Agent executive coordinator online. Zero-telemetry on-premises surveillance active."
