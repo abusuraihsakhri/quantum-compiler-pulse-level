@@ -4,6 +4,7 @@ Domain: Quantum Engineering
 Standard: Qiskit Pulse / OpenPulse Standard
 """
 import datetime
+import math
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List, Optional, Any
@@ -26,6 +27,16 @@ class FrontierPayload:
     attributes: Dict[str, Any] = field(default_factory=dict)
     timestamp: str = field(default_factory=lambda: datetime.datetime.now(datetime.timezone.utc).isoformat())
 
+    def __post_init__(self):
+        for name in ("primary_metric", "secondary_metric"):
+            try:
+                value = float(getattr(self, name))
+            except (TypeError, ValueError) as exc:
+                raise ValueError(f"{name} must be a finite number") from exc
+            if not math.isfinite(value):
+                raise ValueError(f"{name} must be a finite number")
+            setattr(self, name, value)
+
 
 @dataclass
 class AgentTelemetryAlert:
@@ -35,7 +46,7 @@ class AgentTelemetryAlert:
     summary: str
     technical_details: str
     actionable_remediation: str
-    standard_reference: str = "Qiskit Pulse / OpenPulse Standard"
+    standard_reference: str = "Example threshold rules; no standards conformance assessment"
     timestamp: str = field(default_factory=lambda: datetime.datetime.now(datetime.timezone.utc).isoformat())
 
     def to_dict(self) -> Dict[str, Any]:

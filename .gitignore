@@ -40,3 +40,9 @@ Thumbs.db
 
 # Docker
 .docker/
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+.venv/
