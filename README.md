@@ -1,207 +1,73 @@
 # Quantum Compiler Pulse Level
 
-> **Domain:** Post-Quantum Cryptography & Quantum Pulse-Level Microwave Control  
-> **Reference Guidelines & Standards:** `NIST FIPS 203/204/205, Qiskit Pulse / OpenPulse Standard`
+A Python collection of **deterministic threshold evaluators** with CLI, optional FastAPI, CSV batch processing, and a standalone browser demonstration.
 
-<div align="center">
+The project name is historical: the current implementation does **not** compile quantum gates to pulse waveforms, generate DRAG waveforms, model Rabi oscillations, interact with Qiskit hardware, or verify conformance to Qiskit/OpenPulse or NIST standards.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB.svg?logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688.svg?logo=fastapi&logoColor=white)
-![Audit Trail](https://img.shields.io/badge/Audit-HMAC--SHA256_Tamper--Evident-brightgreen.svg)
-![Zero-PHI Guard](https://img.shields.io/badge/Guard-Zero--PHI_Outbound-blue.svg)
-![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)
+## Browser demonstration
 
-</div>
+The standalone [browser evaluator](web/index.html) implements the repository's example decision rules in JavaScript and can be used without a Python server. It evaluates a single task locally, displays its alerts, and supports JSON export. The root `index.html` links to this application for branch-based static hosting.
 
----
+The GitHub repository advertises a Pages URL, but live availability has not been independently verified. The browser evaluator and Python server are separate implementations.
 
-## 📖 What It Does
+## Available Python interfaces
 
-Quantum Compiler Pulse Level is a dual-domain analytical platform combining:
+- `agents/`: primary metric > 25, secondary metric > 12, an optional critical flag, and a fixed set of descriptor substrings; results are summarized with a three-worker classification and an in-memory HMAC-SHA256 audit chain.
+- `pulse_compiler/`: primary metric > 25, secondary metric > 10, a critical flag, and descriptor checks; produces alert dossiers.
+- `enrichment.py`: additional threshold-based demonstration engines.
+- `cli.py`: enterprise evaluation, chat mock, CSV processing, audit-chain verification, and FastAPI server.
+- `pulse_compiler/cli.py`: independent pulse-labelled numeric evaluator CLI.
+- `agents/api.py`: optional REST endpoints `/health`, `/api/audit`, `/api/chat`, `/api/audit/logs` and `/metrics`.
 
-1. **Enterprise Post-Quantum Cryptography Suite** (`agents/`): Multi-worker consensus evaluation engine with HMAC-SHA256 tamper-evident audit trail and zero-PHI outbound data protection.
-2. **Pulse-Level Microwave Control & Qiskit Pulse Calibration Agent** (`pulse_compiler/`): Specialized sub-agent system for DRAG pulse optimization, Rabi oscillation analysis, and state leakage auditing.
+Thresholds are example software rules without calibrated scientific units. They are not validated safety limits.
 
----
+## Install and run
 
-## ⚙️ Key Capabilities & Algorithmic Modules
-
-### Enterprise Suite (agents/)
-- **Multi-Worker Consensus Engine**: Three specialized workers (InvariantQC, SafetyEscalation, ProtocolConformance) evaluate task payloads with automated urgency classification.
-- **Zero-PHI Outbound Interceptor**: Active regex inspection blocking SSNs, MRNs, phone numbers, emails, and patient identifiers.
-- **Tamper-Evident HMAC-SHA256 Audit Trail**: Chained, cryptographically signed logs for every evaluation and state transition.
-- **FastAPI REST API**: Exposes OpenAPI 3.1 REST endpoints (`/api/audit`, `/api/chat`, `/api/audit/logs`, `/health`, `/metrics`).
-
-### Pulse Calibration Agent (pulse_compiler/)
-- **DRAG Pulse Shaper Agent**: Primary parameter boundary auditor with Bayesian optimization tuning.
-- **Rabi Oscillation Analyzer Agent**: Critical kinetics and security safeguard interlock.
-- **State Leakage Auditor Agent**: Protocol conformance and anomaly triage with crosstalk-aware pulse scheduling.
-- **Pulse Control Coordinator**: Executive coordinator managing execution ledger and air-gapped supervisory intelligence.
-
-### Enrichment Modules
-- **DRAG Pulse Optimization via Bayesian Tuning**: Dynamic threshold-based scoring with historical tracking.
-- **Cross-Talk Aware Pulse Scheduling**: Correlation analysis for pulse scheduling optimization.
-- **Active Learning Bayesian Calibration Engine**: Dynamic worker reliability weight tracking with Brier calibration drift monitoring.
-
----
-
-## 💻 Installation
+Requires Python 3.9 or later.
 
 ```bash
-# Clone the repository
-git clone https://github.com/abusuraihsakhri/quantum-compiler-pulse-level.git
-cd quantum-compiler-pulse-level
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[api,test]"
 
-# Install dependencies
-pip install fastapi uvicorn pydantic pytest
-```
-
-### Environment Variables
-
-| Variable | Description | Default |
-|:---------|:------------|:--------|
-| `AUDIT_SECRET_KEY` | Secret key for HMAC-SHA256 audit trail signing | Ephemeral (generated per session) |
-| `MODEL_PROVIDER` | LLM provider for chat (mock, ollama, claude, openai) | mock |
-
----
-
-## 💻 CLI Quickstart & Usage
-
-### 1. Single Task Evaluation
-```bash
-python cli.py audit --task-id TASK-001 --target TARGET-01 --primary 28.5 --secondary 14.2 --critical --status DISCORDANT
-```
-
-### 2. Supervisory Chat
-```bash
-python cli.py chat "What is the system status?"
-```
-
-### 3. Batch CSV Processing
-```bash
+python cli.py audit --task-id T1 --target Q1 --primary 28.5 --secondary 14.2
 python cli.py batch -i sample.csv -o results.csv
-```
-
-### 4. Verify Audit Trail Integrity
-```bash
-python cli.py verify-audit
-```
-
-### 5. Launch REST API Server
-```bash
+python -m pulse_compiler.cli audit --primary 29.4 --secondary 15.1
 python cli.py serve --host 127.0.0.1 --port 8000
 ```
 
-### 6. Pulse Calibration Agent CLI
-```bash
-python pulse_compiler/cli.py audit --task-id TASK-001 --target TARGET-01 --primary 29.4 --secondary 15.1 --critical --status DISCORDANT
-python pulse_compiler/cli.py batch -i sample.csv -o pulse_results.csv
-```
+The API serves on port 8000 by default. For a static frontend, open `web/index.html` in a browser or use a static file server. GitHub Pages cannot host the Python API.
 
-### Parameter Reference
-- `--task-id`: Unique task identifier (string)
-- `--target`: Target entity identifier (string)
-- `--primary`: Primary measurement value (float)
-- `--secondary`: Secondary metric value (float)
-- `--critical`: Flag for critical/emergency status (boolean)
-- `--status`: Status descriptor (e.g., NOMINAL, DISCORDANT_ANOMALY, MUTANT_VARIANT)
+## Security and privacy
 
----
+- The browser demonstration does not send task data to a server. JSON exports include the supplied identifiers, so avoid submitting sensitive data.
+- Python includes **pattern-based** detection for selected identifiers, not comprehensive de-identification or HIPAA certification. Do not use real patient data.
+- Audit entries are retained **in memory** and are HMAC-signed with `AUDIT_SECRET_KEY`. Without a configured key, an ephemeral per-process key is used; audit entries do not survive restarts.
+- `GET /api/audit/logs` returns 403 unless `AUDIT_LOGS_TOKEN` is configured and sent as an `Authorization: Bearer <token>` header. Protect the API behind authentication and TLS before network exposure; other endpoints do not implement authentication.
+- `MODEL_PROVIDER` currently uses deterministic mock responses. No external model integration is implemented.
 
-## 🛡️ Security & Enterprise Architecture
-
-* **Zero-PHI Outbound Interceptor:** Active regex inspection blocking SSNs, MRNs, phone numbers, emails, and patient identifiers before any audit logging or outbound transmission.
-* **Tamper-Evident HMAC-SHA256 Audit Trail:** Chained, cryptographically signed logs with linked hash chain for integrity verification.
-* **Path Traversal Protection:** Batch CSV processing validates input/output paths to prevent directory traversal attacks.
-* **Input Validation:** Robust error handling for malformed CSV data with per-row error reporting.
-* **Air-Gapped LLM Reasoning Adapter:** Agnostic integration for local Ollama instances, Claude 3.5 Sonnet, GPT-4o, and deterministic test mocks.
-* **FastAPI & Prometheus Telemetry:** Exposes OpenAPI 3.1 REST endpoints and operational Prometheus metrics (`/metrics`).
-
----
-
-## 🧪 Testing & Verification
-
-Run the full automated test suite:
+To run Docker Compose, provide a unique secret without committing it:
 
 ```bash
-pytest -v
+export AUDIT_SECRET_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(48))')"
+docker compose up --build
 ```
 
-Execute high-throughput batch simulation benchmarks:
+Optionally configure `AUDIT_LOGS_TOKEN` separately for authorized audit-log reads.
+
+## Tests
 
 ```bash
-python simulator.py 1000
+python -m pytest -v
+node --test tests/browser.test.cjs
 ```
 
-Run specific test modules:
+The GitHub Actions workflow runs the Python suite on Python 3.10–3.12 and checks the browser decision rules with Node.js. Container smoke testing and external Pages availability require separate verification.
 
-```bash
-pytest tests/test_security_and_validation.py -v
-pytest tests/test_enrichment.py -v
-pytest tests/test_pulse_compiler.py -v
-```
+## Project layout
 
----
+`agents/` contains the enterprise API, evaluator, mock chat adapter, and audit tooling. `pulse_compiler/` contains the separate numeric pulse-labelled evaluator. `web/` contains the static JavaScript application. `tests/` contains Python and browser regression tests.
 
-## 🐳 Container Deployment
+## Browser compatibility and license
 
-```bash
-docker build -t quantum-compiler-pulse-level .
-docker run -p 8000:8000 -e AUDIT_SECRET_KEY=your-secret-key quantum-compiler-pulse-level
-```
-
-Or using Docker Compose:
-
-```bash
-docker-compose up -d
-```
-
----
-
-## 📁 Project Structure
-
-```
-quantum-compiler-pulse-level/
-├── agents/                    # Enterprise Post-Quantum Cryptography Suite
-│   ├── __init__.py
-│   ├── api.py                 # FastAPI REST endpoints
-│   ├── base.py                # Security, PHI Guard, HMAC Audit Trail
-│   ├── learning.py            # Active Learning Bayesian Calibration
-│   ├── llm_factory.py         # LLM provider abstraction
-│   ├── metrics.py             # Prometheus metrics exporter
-│   ├── models.py              # Pydantic v2 schemas
-│   ├── streamer.py            # WebSocket telemetry broadcaster
-│   ├── supervisor.py          # Multi-worker orchestrator
-│   └── workers.py             # Specialized evaluation workers
-├── pulse_compiler/            # Qiskit Pulse Calibration Agent
-│   ├── __init__.py
-│   ├── agents.py              # DRAG, Rabi, Leakage sub-agents
-│   ├── cli.py                 # Pulse calibration CLI
-│   ├── engine.py              # Core algorithmic engine
-│   ├── models.py              # Data models and telemetry
-│   └── server.py              # FastAPI server factory
-├── tests/                     # Pytest test suite
-│   ├── test_enrichment.py     # Enrichment module tests
-│   ├── test_pulse_compiler.py # Pulse calibration tests
-│   ├── test_quantum_compiler_pulse_level.py  # Enterprise suite tests
-│   └── test_security_and_validation.py       # Security & validation tests
-├── web/index.html             # Operations console UI
-├── cli.py                     # Main CLI entry point
-├── pulse_compiler_app.py      # CLI wrapper
-├── simulator.py               # High-throughput simulation
-├── enrichment.py              # Enrichment feature modules
-├── sample.csv                 # Sample batch input data
-├── sample_payload.json        # Sample API payload
-├── benchmark_dataset.json     # Golden benchmark test suite
-├── openapi_spec.json          # OpenAPI 3.1 specification
-├── Dockerfile                 # Container build
-├── docker-compose.yml         # Container orchestration
-└── pyproject.toml             # Package metadata
-```
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
+The static application uses standard browser JavaScript, DOM APIs, and Blob downloads; use a current desktop or mobile browser. It has no external JavaScript dependencies. The repository is licensed under [MIT](LICENSE).
