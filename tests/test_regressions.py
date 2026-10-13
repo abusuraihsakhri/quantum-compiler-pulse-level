@@ -41,3 +41,25 @@ def test_audit_log_endpoint_requires_secret(monkeypatch):
     monkeypatch.setenv("AUDIT_LOGS_TOKEN", "test-token")
     assert client.get("/api/audit/logs", headers={"Authorization": "Bearer wrong"}).status_code == 403
     assert client.get("/api/audit/logs", headers={"Authorization": "Bearer test-token"}).status_code == 200
+
+
+def test_concurrent_audit_entries_remain_verifiable():
+    from concurrent.futures import ThreadPoolExecutor
+    trail = AuditTrail(secret_key="test-only-key")
+    def write(i):
+        trail.log("worker", "supervisor", "EVALUATE", {"task": i})
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        list(pool.map(write, range(200)))
+    assert len(trail.get_trail()) == 200
+    assert trail.verify_integrity() is True
+
+
+def test_attributes_checked_for_sensitive_identifiers():
+    from agents.base import SecurityException
+    from agents.supervisor import SystemSupervisor
+    payload = SystemTaskPayload(
+        task_id="T1", target_identifier="Q1", primary_metric=1,
+        attributes={"contact": "user@example.com"},
+    )
+    with pytest.raises(SecurityException):
+        SystemSupervisor().process_task(payload)
