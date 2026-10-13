@@ -2,7 +2,9 @@
 FastAPI REST API Server for Quantum Compiler Pulse Level.
 """
 from typing import Dict, Any, List
-from fastapi import FastAPI, HTTPException
+import os
+import hmac
+from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
 from .base import AuditLogger, PHIGuard
 from .models import SystemTaskPayload, ConsensusDossier
@@ -51,5 +53,8 @@ def api_chat(req: ChatRequest):
 
 
 @app.get("/api/audit/logs")
-def api_audit_logs():
+def api_audit_logs(authorization: str = Header(default="")):
+    token = os.getenv("AUDIT_LOGS_TOKEN")
+    if not token or not hmac.compare_digest(authorization, "Bearer " + token):
+        raise HTTPException(status_code=403, detail="Audit log access is disabled or unauthorized")
     return {"audit_trail": AuditLogger.get_trail(), "verified": AuditLogger.verify_integrity()}
